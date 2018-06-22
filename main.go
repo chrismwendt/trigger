@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"strings"
+	"syscall"
 
 	"github.com/fatih/color"
 )
@@ -19,12 +20,13 @@ func runCommand() {
 	reset := color.New(color.Reset)
 
 	if cmd != nil {
-		cmd.Process.Kill()
+		syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
 	}
 
 	name := os.Args[1]
 	args := os.Args[2:]
 	cmd = exec.Command(name, args...)
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -35,6 +37,8 @@ func runCommand() {
 	go func() {
 		if err := cmd.Wait(); err == nil {
 			blue.Println("Done")
+		} else {
+			blue.Println("Done: " + err.Error())
 		}
 	}()
 }
@@ -45,7 +49,7 @@ func main() {
 	go func() {
 		for range c {
 			if cmd != nil {
-				cmd.Process.Kill()
+				syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
 			}
 			os.Exit(0)
 		}
