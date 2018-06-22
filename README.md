@@ -1,6 +1,5 @@
 # trigger
 
-- Runs a command when you curl localhost:9090
-- Avoids open file limits of file watchers
+Runs a command when you `curl localhost:9090`.
 
-Bind this to a hotkey (e.g. Cmd+' with Hammerspoon) and run 'trigger long-running-process'.
+You can bind `curl localhost:9090` to a hotkey (e.g. `Cmd+'` with [Hammerspoon](https://www.hammerspoon.org/)), run `trigger long-running-process`, then press `Cmd+'` to restart the command.
