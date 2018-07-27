@@ -15,13 +15,17 @@ import (
 
 var cmd *exec.Cmd
 
+func killIfRunning(cmd *exec.Cmd) {
+	if cmd != nil {
+		syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
+	}
+}
+
 func runCommand() {
 	blue := color.New(color.FgBlue)
 	reset := color.New(color.Reset)
 
-	if cmd != nil {
-		syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
-	}
+	killIfRunning(cmd)
 
 	name := os.Args[1]
 	args := os.Args[2:]
@@ -64,6 +68,7 @@ func main() {
 	runCommand()
 	err := http.ListenAndServe(":9090", nil)
 	if err != nil {
+		killIfRunning(cmd)
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
