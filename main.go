@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +13,9 @@ import (
 
 	"github.com/fatih/color"
 )
+
+var clear = flag.Bool("clear", false, "clear the terminal each time")
+var cmdParts []string
 
 var cmd *exec.Cmd
 
@@ -27,9 +31,14 @@ func runCommand() {
 
 	killIfRunning(cmd)
 
-	name := os.Args[1]
-	args := os.Args[2:]
-	cmd = exec.Command(name, args...)
+	cmdParts := flag.Args()
+	if *clear {
+		clear := exec.Command("clear")
+		clear.Stdout = os.Stdout
+		clear.Start()
+		clear.Wait()
+	}
+	cmd = exec.Command(cmdParts[0], cmdParts[1:]...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -48,6 +57,9 @@ func runCommand() {
 }
 
 func main() {
+	flag.Parse()
+	cmdParts = flag.Args()
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	go func() {
@@ -66,7 +78,7 @@ func main() {
 		runCommand()
 	})
 	runCommand()
-	err := http.ListenAndServe(":9090", nil)
+	err := http.ListenAndServe(":7416", nil)
 	if err != nil {
 		killIfRunning(cmd)
 		log.Fatal("ListenAndServe: ", err)
