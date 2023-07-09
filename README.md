@@ -7,7 +7,7 @@ Conveniently rerun any shell script on keystroke. It's useful for running build 
 ## Installation
 
 ```
-go get -u github.com/chrismwendt/trigger
+go install github.com/chrismwendt/trigger@latest
 ```
 
 Register a keybinding in your desktop automation tool of choice. For [Hammerspoon](https://www.hammerspoon.org/):
