@@ -32,7 +32,7 @@ func spawn() {
 
 	cmdParts := flag.Args()
 	if *clear {
-		clear := exec.Command("clear")
+		clear := exec.Command("tput", "reset")
 		clear.Stdout = os.Stdout
 		clear.Start()
 		clear.Wait()
