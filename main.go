@@ -21,7 +21,7 @@ var cmd *exec.Cmd
 var ready = make(chan struct{}, 1)
 
 func kill() {
-	if cmd != nil && cmd.ProcessState == nil {
+	if cmd != nil && cmd.ProcessState == nil && cmd.Process != nil {
 		syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
 	}
 	<-ready
